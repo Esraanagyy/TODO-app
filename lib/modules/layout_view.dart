@@ -1,0 +1,65 @@
+import 'package:flutter/material.dart';
+
+class LayoutView extends StatefulWidget{
+  const LayoutView({super.key});
+
+  @override
+  State<LayoutView> createState() => _LayoutViewState();
+}
+
+class _LayoutViewState extends State<LayoutView> {
+  int currentIndex = 0;
+  @override
+  Widget build(BuildContext context) {
+    var theme = Theme.of(context);
+    return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: FloatingActionButton(
+        elevation: 2,
+        onPressed: (){},
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(50),
+        ),
+        child: CircleAvatar(
+          radius: 25,
+          backgroundColor: theme.primaryColor,
+          child: const Icon(
+            Icons.add,
+            size: 35,
+            color: Colors.white
+          ),
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        padding: EdgeInsets.zero,
+        notchMargin: 12,
+        shape: const CircularNotchedRectangle(),
+        child: BottomNavigationBar(
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          currentIndex: currentIndex,
+          onTap: (value){
+               setState(() {
+                 currentIndex = value;
+               });
+          },
+          items: const [
+               BottomNavigationBarItem(icon: ImageIcon(
+                 AssetImage("assets/icons/icon_list.png"),
+               ),
+                 label: "Tasks",
+
+               ),
+
+            BottomNavigationBarItem(icon: ImageIcon(
+              AssetImage("assets/icons/icon_settings.png"),
+            ),
+              label: "Settings"
+            ),
+  ]),
+      ),
+    )
+
+  ;}
+}
