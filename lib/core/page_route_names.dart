@@ -6,5 +6,4 @@ class PageRouteNames {
  static const String layout ="Layout";
 
 
-
 }

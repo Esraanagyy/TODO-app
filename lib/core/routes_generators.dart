@@ -4,6 +4,7 @@ import 'package:to_do/modules/layout_view.dart';
 import 'package:to_do/modules/login/login_view.dart';
 import 'package:to_do/modules/register/register_view.dart';
 import 'package:to_do/modules/splash/splash_view.dart';
+import 'package:to_do/modules/tasks/widgets/add_task.dart';
 
 class RouteGenerator {
 
@@ -33,7 +34,6 @@ class RouteGenerator {
           builder: (context) => const LayoutView(),
           settings: settings,
         );
-
 
       default :
         return MaterialPageRoute(
