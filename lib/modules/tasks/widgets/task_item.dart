@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:to_do/model/task_model.dart';
 
-class TaskItem extends StatelessWidget{
-  const TaskItem({super.key});
+class TaskItem extends StatefulWidget{
 
+  final TaskModel taskModel;
+  const TaskItem({super.key, required this.taskModel});
+
+  @override
+  State<TaskItem> createState() => _TaskItemState();
+}
+
+class _TaskItemState extends State<TaskItem> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
@@ -13,7 +22,7 @@ class TaskItem extends StatelessWidget{
       ),
       padding: const EdgeInsets.symmetric(
           horizontal: 10,
-          vertical: 30
+          vertical: 20
       ),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -32,7 +41,7 @@ class TaskItem extends StatelessWidget{
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
               Text(
-                "Play BasketBall",
+                widget.taskModel.title,
                 style: theme.textTheme.titleLarge?.copyWith(
                   color: theme.primaryColor,
                   fontSize: 18,
@@ -40,6 +49,14 @@ class TaskItem extends StatelessWidget{
                 ),
               ),
             const SizedBox(height: 6),
+            Text(
+              widget.taskModel.description,
+              style: theme.textTheme.titleLarge?.copyWith(
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500
+              ),
+            ),
             Row(
               children: [
                 const Icon(
@@ -48,7 +65,7 @@ class TaskItem extends StatelessWidget{
                   color: Colors.black),
                 const SizedBox(width: 5),
                 Text(
-                  "10:30 AM",
+                  DateFormat("dd MMM yyyy").format(widget.taskModel.selectedDate),
                   style: theme.textTheme.titleLarge?.copyWith(
                       color: Colors.black,
                       fontSize: 12,
@@ -77,5 +94,4 @@ class TaskItem extends StatelessWidget{
       ),
     )
  ; }
-
 }
