@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:to_do/core/page_route_names.dart';
+import 'package:to_do/modules/edit/edit_task_view.dart';
 import 'package:to_do/modules/layout_view.dart';
 import 'package:to_do/modules/login/login_view.dart';
 import 'package:to_do/modules/register/register_view.dart';
@@ -32,6 +33,12 @@ class RouteGenerator {
       case PageRouteNames.layout:
         return MaterialPageRoute(
           builder: (context) => const LayoutView(),
+          settings: settings,
+        );
+
+      case PageRouteNames.edit:
+        return MaterialPageRoute(
+          builder: (context) => const EditTaskView(),
           settings: settings,
         );
 

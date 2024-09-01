@@ -1,10 +1,13 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:to_do/core/firebase_utils.dart';
 import 'package:to_do/model/task_model.dart';
 import 'package:to_do/services/snack_bar_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import '../../../core/settings_provider.dart';
 
 class AddTask extends StatefulWidget{
   const AddTask({super.key});
@@ -22,6 +25,9 @@ class _AddTaskState extends State<AddTask> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
+    var lang = AppLocalizations.of(context);
+    var provider = Provider.of<SettingsProvider>(context);
+
        return Container(
          //height: 400,
          padding: const EdgeInsets.only(
@@ -31,7 +37,7 @@ class _AddTaskState extends State<AddTask> {
            bottom: 20
          ),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: provider.isDark() ? const Color(0xff141922):Colors.white,
           borderRadius: BorderRadius.circular(15),
         ),
          child: Form(
@@ -40,21 +46,29 @@ class _AddTaskState extends State<AddTask> {
              crossAxisAlignment: CrossAxisAlignment.stretch,
              children: [
                Text(
-                 "Add new Task",
+                 lang!.addNewTask,
                  textAlign: TextAlign.center,
                  style: theme.textTheme.bodyLarge?.copyWith(
-                   color: Colors.black,
+                   color: provider.isDark()? Colors.white:Colors.black,
                  ),
                ),
                const SizedBox(height: 30),
                TextFormField(
                  controller: titleController,
-                  decoration: const InputDecoration(
-                    hintText: "Enter Task Title"
+                  decoration: InputDecoration(
+                      border: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                              color: provider.isDark()?Colors.white :Colors.grey
+                          )
+                      ),
+                    hintText: lang.enterTaskTitle,
+                    hintStyle: TextStyle(
+                      color: provider.isDark()? Colors.white:Colors.black,
+                    )
                   ),
                  validator: (value){
                     if(value == null || value.trim().isEmpty){
-                      return "please enter task title";
+                      return lang.enterTaskTitle;
                     }
                     return null;
                  },
@@ -63,21 +77,29 @@ class _AddTaskState extends State<AddTask> {
                  TextFormField(
                    controller: descriptionController,
                    maxLines: 2,
-                   decoration: const InputDecoration(
-                       hintText: "Enter Task Description "
+                   decoration: InputDecoration(
+                       border: UnderlineInputBorder(
+                           borderSide: BorderSide(
+                               color: provider.isDark()?Colors.white :Colors.grey
+                           )
+                       ),
+                       hintText: lang.enterTaskDescription,
+                       hintStyle: TextStyle(
+                         color: provider.isDark()? Colors.white:Colors.black,
+                       )
                    ),
                    validator: (value){
                      if(value == null || value.trim().isEmpty){
-                       return "please enter task description";
+                       return lang.enterTaskDescription;
                      }
                      return null;
                    },
                ),
                const SizedBox(height: 20),
                 Text(
-                 "Select time",
+                 lang.selectTime,
                  style: theme.textTheme.bodyLarge?.copyWith(
-                   color: Colors.black,
+                   color: provider.isDark()? Colors.white:Colors.black,
                    fontWeight: FontWeight.w500,
                  ),
                ),
@@ -91,7 +113,7 @@ class _AddTaskState extends State<AddTask> {
                    //selectedDate.toString(),
                    textAlign: TextAlign.center,
                    style: theme.textTheme.bodyLarge?.copyWith(
-                     color: Colors.black,
+                     color: provider.isDark()? Colors.white:Colors.black,
                      fontWeight: FontWeight.w500,
                    ),
                  ),
@@ -127,7 +149,7 @@ class _AddTaskState extends State<AddTask> {
                    ),
                  ),
                    child: Text(
-                     "save ",
+                     lang.save,
                      style: theme.textTheme.bodyMedium?.copyWith(
                        color: Colors.white,
                      ),

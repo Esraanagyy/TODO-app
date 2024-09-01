@@ -17,6 +17,8 @@ class _LayoutViewState extends State<LayoutView> {
       const TasksView(),
       const SettingsView(),
   ];
+
+  get provider => null;
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
@@ -47,8 +49,6 @@ class _LayoutViewState extends State<LayoutView> {
         notchMargin: 12,
         shape: const CircularNotchedRectangle(),
         child: BottomNavigationBar(
-          elevation: 0,
-          backgroundColor: Colors.transparent,
           currentIndex: currentIndex,
           onTap: (value){
                setState(() {
@@ -73,4 +73,9 @@ class _LayoutViewState extends State<LayoutView> {
     )
 
   ;}
+  @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    throw UnimplementedError();
+  }
 }

@@ -1,9 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:to_do/core/firebase_utils.dart';
 import 'package:to_do/model/task_model.dart';
 import 'package:to_do/modules/tasks/widgets/task_item.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import '../../core/settings_provider.dart';
 
 class TasksView extends StatefulWidget{
   const TasksView({super.key});
@@ -25,6 +29,8 @@ class _TasksViewState extends State<TasksView> {
 
     var mediaQuery = MediaQuery.of(context);
     var theme = Theme.of(context);
+    var lang = AppLocalizations.of(context);
+    var provider = Provider.of<SettingsProvider>(context);
 
     return  Column(
           children: [
@@ -46,9 +52,9 @@ class _TasksViewState extends State<TasksView> {
                           height: mediaQuery.size.height*0.2,
                           color: theme.primaryColor,
                           child: Text(
-                            "To Do List",
+                            lang!.todoList,
                             style: theme.textTheme.titleLarge?.copyWith(
-                              color:Colors.white,
+                              color: provider.isDark() ? const Color(0xff141922) : Colors.white,
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
                             ),
@@ -58,13 +64,13 @@ class _TasksViewState extends State<TasksView> {
                             top: 120,
                             child: SizedBox(
                               width: mediaQuery.size.width,
-                              child:  EasyInfiniteDateTimeLine(
-                                selectionMode: const SelectionMode.alwaysFirst(),
+                              child:
+                               EasyInfiniteDateTimeLine(
                                 controller: _controller,
-                                firstDate: DateTime(2024),
-                                focusDate: _focusDate,
-                                lastDate: DateTime.now().add(
-                                  const Duration(days: 365),
+                                 firstDate: DateTime(2024),
+                                 focusDate: _focusDate,
+                                 lastDate: DateTime.now().add(
+                                   const Duration(days: 365),
                                 ),
                                 onDateChange: (selectedDate) {
                                   setState(() {
@@ -79,63 +85,66 @@ class _TasksViewState extends State<TasksView> {
                                 dayProps: EasyDayProps(
                                    todayStyle: DayStyle(
                                      decoration: BoxDecoration(
-                                       color: Colors.white.withOpacity(0.8),
+                                       color: provider.isDark()? const Color(0xff141922).withOpacity(0.8) :Colors.white.withOpacity(0.8),
                                        borderRadius: BorderRadius.circular(12),
                                      ),
                                      monthStrStyle: theme.textTheme.bodyMedium?.copyWith(
                                        fontWeight: FontWeight.bold,
                                        fontSize: 14,
-                                       color: Colors.black,
+                                       color: provider.isDark()? Colors.white:Colors.black,
                                      ),
                                      dayNumStyle: theme.textTheme.bodyMedium?.copyWith(
                                        fontWeight: FontWeight.bold,
                                        fontSize: 14,
-                                       color: Colors.black,
+                                       color: provider.isDark()? Colors.white:Colors.black,
                                      ),
                                      dayStrStyle: theme.textTheme.bodyMedium?.copyWith(
                                        fontWeight: FontWeight.bold,
                                        fontSize: 14,
-                                       color: Colors.black,
+                                       color: provider.isDark()? Colors.white:Colors.black,
                                      ),
                                    ),
 
                                   activeDayStyle: DayStyle(
                                     decoration: BoxDecoration(
-                                      color: Colors.white,
+                                      color: provider.isDark()? const Color(0xff141922).withOpacity(0.8) :Colors.white.withOpacity(0.8),
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     monthStrStyle: theme.textTheme.bodyMedium?.copyWith(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 14
+                                      fontSize: 14,
+                                      color: theme.primaryColor
                                     ),
                                     dayNumStyle: theme.textTheme.bodyMedium?.copyWith(
                                       fontWeight: FontWeight.bold,
-                                        fontSize: 14
+                                        fontSize: 14,
+                                        color: theme.primaryColor
                                   ),
                                     dayStrStyle: theme.textTheme.bodyMedium?.copyWith(
                                       fontWeight: FontWeight.bold,
-                                        fontSize: 14
+                                        fontSize: 14,
+                                        color: theme.primaryColor
                                     )
                                 ),
                                   inactiveDayStyle: DayStyle(
                                       decoration: BoxDecoration(
-                                        color: Colors.white.withOpacity(0.8),
+                                        color: provider.isDark()? const Color(0xff141922).withOpacity(0.8) :Colors.white.withOpacity(0.8),
                                         borderRadius: BorderRadius.circular(12),
                                       ),
                                       monthStrStyle: theme.textTheme.bodyMedium?.copyWith(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 14,
-                                          color: Colors.black,
+                                          color: provider.isDark()? Colors.white:Colors.black,
                                       ),
                                       dayNumStyle: theme.textTheme.bodyMedium?.copyWith(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 14,
-                                          color: Colors.black,
+                                          color: provider.isDark()? Colors.white:Colors.black,
                                       ),
                                       dayStrStyle: theme.textTheme.bodyMedium?.copyWith(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 14,
-                                          color: Colors.black,
+                                          color: provider.isDark()? Colors.white:Colors.black,
                                       ),
                                   ),
 
@@ -152,25 +161,21 @@ class _TasksViewState extends State<TasksView> {
                 stream: FirebaseUtils.getRealTimeData(_focusDate),
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
-                    return Expanded(
-                      child: Center(
+                    return Center(
                         child: Text(
-                         "something went wrong",
+                         lang.somethingWentWrong,
                           style: theme.textTheme.titleLarge?.copyWith(
                             color: theme.primaryColor,
                           ),
                         ),
-                      ),
                     );
                   }
 
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Expanded(
-                      child: Center(
+                    return Center(
                         child: CircularProgressIndicator(
                           color: theme.primaryColor,
                         ),
-                      ),
                     );
                   }
 
@@ -181,23 +186,19 @@ class _TasksViewState extends State<TasksView> {
                       .toList();
 
                   return tasksList == null || tasksList.isEmpty
-                      ? Expanded(
-                    child: Center(
+                      ? Center(
                       child: Text(
-                        "No tasks for today",
+                       lang.noTasksForThisDay,
                         style: theme.textTheme.titleLarge?.copyWith(
                           color: theme.primaryColor,
                         ),
                       ),
-                    ),
-                  )
-                      : Expanded(
-                    child: ListView.builder(
+                  ) :
+                     ListView.builder(
                       itemBuilder: (context, index) => TaskItem(
                         taskModel: tasksList[index],
                       ),
                       itemCount: tasksList.length ?? 0,
-                    ),
                   );
                 },
               ), ),

@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:provider/provider.dart';
 import 'package:to_do/modules/layout_view.dart';
 
+import '../../core/firebase_utils.dart';
 import '../../core/page_route_names.dart';
+import '../../core/settings_provider.dart';
+import '../../services/snack_bar_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoginView extends StatefulWidget{
   const LoginView({super.key});
@@ -18,7 +24,9 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
+    var lang = AppLocalizations.of(context);
     var mediaQuery = MediaQuery.of(context);
+    var provider = Provider.of<SettingsProvider>(context);
 
     return Container(
       decoration: const BoxDecoration(
@@ -33,8 +41,8 @@ class _LoginViewState extends State<LoginView> {
           backgroundColor: Colors.transparent,
           elevation: 0,
           centerTitle: true,
-          title: const Text(
-            "Login"
+          title: Text(
+            lang!.login,
           ),
         ),
         body: SingleChildScrollView(
@@ -47,7 +55,7 @@ class _LoginViewState extends State<LoginView> {
                   children: [
                     SizedBox(height: mediaQuery.size.height*0.2 ),
                      Text(
-                      "Welcome back!",
+                      lang.welcome,
                       style: theme.textTheme.titleLarge?.copyWith(
                         color: Colors.black,
                       ),
@@ -63,7 +71,7 @@ class _LoginViewState extends State<LoginView> {
                           ),
                           validator: (value){
                             if(value == null || value.trim().isEmpty){
-                              return "please enter your email";
+                              return lang.pleaseEnterYourName;
                             }
                             var regex = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
                             if(!regex.hasMatch(value)){
@@ -73,13 +81,13 @@ class _LoginViewState extends State<LoginView> {
                           },
                           decoration: InputDecoration(
                             label: Text(
-                              "E-mail",
+                              lang.email,
                               style: theme.textTheme.displayLarge?.copyWith(
                                 color: Colors.black,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
-                            hintText: "please enter your email address",
+                            hintText: lang.pleaseEnterYourEmail,
                             focusedBorder: const UnderlineInputBorder(
                               borderSide: BorderSide(
                                 color: Colors.black,
@@ -100,19 +108,19 @@ class _LoginViewState extends State<LoginView> {
                       obscureText: isObscured,
                       validator: (value){
                         if(value == null || value.trim().isEmpty){
-                          return "please enter your password";
+                          return lang.pleaseEnterYourPassword;
                         }
                         return null;
                       },
                       decoration: InputDecoration(
                         label: Text(
-                          "Password",
+                          lang.password,
                           style: theme.textTheme.displayLarge?.copyWith(
                             color: Colors.black,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        hintText: "please enter your password",
+                        hintText: lang.pleaseEnterYourPassword,
                         focusedBorder: const UnderlineInputBorder(
                             borderSide: BorderSide(
                               color: Colors.black,
@@ -136,19 +144,27 @@ class _LoginViewState extends State<LoginView> {
                     ),
                     const SizedBox(height: 20 ),
                      Text(
-                      "Forget password?",
+                      lang.forgetPassword,
                       style: theme.textTheme.displaySmall?.copyWith(
+                        fontSize: 15,
                         decoration: TextDecoration.underline,
                       ),
                     ),
                     const SizedBox(height: 60 ),
                     FilledButton(
-                        onPressed: (){
-                             //if(formKey.currentState!.validate()){
-                                 //print("valid")  ;}
-                            Navigator.pushReplacementNamed(
-                                context, PageRouteNames.layout);
-                             },
+                        onPressed: () {
+                          if (formKey.currentState!.validate()) {
+                            FirebaseUtils.signIn(
+                                emailController.text, passwordController.text).
+                            then((value) => {
+                              if(value){
+                                EasyLoading.dismiss(),
+                                SnackBarService.showSuccessMessage("Login successfully!"),
+                                Navigator.pushReplacementNamed(context, PageRouteNames.layout)
+                              }
+                            });
+                          }
+                        },
 
                         style: FilledButton.styleFrom(
                           padding:const EdgeInsets.symmetric(horizontal: 20,vertical: 12) ,
@@ -161,7 +177,7 @@ class _LoginViewState extends State<LoginView> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                      "Login",
+                           lang.login,
                       style: theme.textTheme.bodyLarge?.copyWith(
                             color: Colors.white
                       ),
@@ -177,8 +193,9 @@ class _LoginViewState extends State<LoginView> {
                         );
                       },
                       child: Text(
-                        "Or Create My Account",
+                        lang.createAnAccount,
                         style: theme.textTheme.displaySmall?.copyWith(
+                          fontSize: 20,
                           decoration: TextDecoration.underline,
                         ),
                       ),

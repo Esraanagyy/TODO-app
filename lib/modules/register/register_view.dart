@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:to_do/core/firebase_utils.dart';
+import 'package:to_do/services/snack_bar_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RegisterView extends StatefulWidget{
   const RegisterView({super.key});
@@ -21,6 +25,7 @@ class _RegisterViewState extends State<RegisterView> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
+    var lang = AppLocalizations.of(context);
     var mediaQuery = MediaQuery.of(context);
 
     return Container(
@@ -36,8 +41,8 @@ class _RegisterViewState extends State<RegisterView> {
           backgroundColor: Colors.transparent,
           elevation: 0,
           centerTitle: true,
-          title: const Text(
-              "Create account"
+          title: Text(
+              lang!.createAccount
           ),
         ),
         body: SingleChildScrollView(
@@ -58,19 +63,19 @@ class _RegisterViewState extends State<RegisterView> {
                     ),
                     validator: (value){
                       if(value == null || value.trim().isEmpty){
-                        return "please enter your full name";
+                        return lang.pleaseEnterYourName;
                       }
                       return null;
                     },
                     decoration: InputDecoration(
                       label: Text(
-                        "User name",
+                        lang.userName,
                         style: theme.textTheme.displayLarge?.copyWith(
                           color: Colors.black,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      hintText: "please enter your full name",
+                      hintText: lang.pleaseEnterYourName,
                       focusedBorder: const UnderlineInputBorder(
                           borderSide: BorderSide(
                             color: Colors.black,
@@ -90,7 +95,7 @@ class _RegisterViewState extends State<RegisterView> {
                     ),
                     validator: (value){
                       if(value == null || value.trim().isEmpty){
-                        return "please enter your email";
+                        return lang.pleaseEnterYourEmail;
                       }
                       var regex = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
                       if(!regex.hasMatch(value)){
@@ -100,13 +105,13 @@ class _RegisterViewState extends State<RegisterView> {
                     },
                     decoration: InputDecoration(
                       label: Text(
-                        "E-mail",
+                        lang.email,
                         style: theme.textTheme.displayLarge?.copyWith(
                           color: Colors.black,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      hintText: "please enter your email address",
+                      hintText: lang.pleaseEnterYourEmail,
                       focusedBorder: const UnderlineInputBorder(
                           borderSide: BorderSide(
                             color: Colors.black,
@@ -127,19 +132,19 @@ class _RegisterViewState extends State<RegisterView> {
                     obscureText: isObscured,
                     validator: (value){
                       if(value == null || value.trim().isEmpty){
-                        return "please enter your password";
+                        return lang.pleaseEnterYourPassword;
                       }
                       return null;
                     },
                     decoration: InputDecoration(
                       label: Text(
-                        "Password",
+                        lang.password,
                         style: theme.textTheme.displayLarge?.copyWith(
                           color: Colors.black,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      hintText: "please enter your password",
+                      hintText: lang.pleaseEnterYourPassword,
                       focusedBorder: const UnderlineInputBorder(
                           borderSide: BorderSide(
                             color: Colors.black,
@@ -165,7 +170,15 @@ class _RegisterViewState extends State<RegisterView> {
                   const SizedBox(height: 60 ),
                   FilledButton(onPressed: (){
                     if(formKey.currentState!.validate()){
-                      print("valid")  ;
+                      FirebaseUtils.createAccount(
+                          emailController.text, passwordController.text).
+                      then((value) => {
+                        if(value){
+                          EasyLoading.dismiss(),
+                          SnackBarService.showSuccessMessage("Account created successfully!"),
+                          Navigator.pop(context),
+                        }
+                      });
                     }
                   },
                       style: FilledButton.styleFrom(
@@ -179,7 +192,7 @@ class _RegisterViewState extends State<RegisterView> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Create account",
+                            lang.createAccount,
                             style: theme.textTheme.bodyLarge?.copyWith(
                                 color: Colors.white
                             ),
